@@ -166,9 +166,9 @@ func setupRouter(store stores.Store) *chi.Mux {
 		})
 	})
 
-	r.Route("/auth/github", func(r chi.Router) {
-		r.Get("/login", auth.HandleGitHubLogin)
-		r.Get("/callback", auth.HandleGitHubCallback)
+	r.Route("/auth", func(r chi.Router) {
+		r.Get("/login", auth.HandleLogin)
+		r.Get("/callback", auth.HandleCallback)
 	})
 
 	return r
@@ -306,7 +306,7 @@ func main() {
 		FullTimestamp: true,
 	})
 
-	auth.Init()
+	auth.InitAuth()
 	openai.Init()
 	store := stores.GetStore()
 

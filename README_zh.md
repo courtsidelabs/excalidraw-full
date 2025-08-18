@@ -53,6 +53,32 @@ docker compose up -d
 
 服务器将启动，您可以在 `http://localhost:3002` 访问该应用。
 
+<!-- Summary Folded -->
+<details>
+<summary>使用简单密码认证(Dex OIDC)</summary>
+
+```bash
+# 示例
+git clone https://github.com/BetterAndBetterII/excalidraw-full.git
+cd excalidraw-full
+mv .env.example .env
+touch ./excalidraw.db  # 重要：初始化 SQLite 数据库，否则无法启动
+docker compose -f docker-compose.dex.yml up -d
+```
+
+修改 `.env` 文件中的密码。
+
+```bash
+# apt install apache2-utils
+# 生成密码哈希
+echo YOUR_NEW_PASSWORD | htpasswd -BinC 10 admin | cut -d: -f2 > .htpasswd
+# 更新 .env 文件
+sed -i "s|ADMIN_PASSWORD_HASH=.*|ADMIN_PASSWORD_HASH='$(cat .htpasswd)'|" .env
+```
+
+</details>
+
+
 ## 配置
 
 配置通过环境变量进行管理。有关完整模板，请参阅下面的 `.env.example` 部分。
@@ -63,7 +89,7 @@ docker compose up -d
 
 - `GITHUB_CLIENT_ID`: 您的 GitHub OAuth App 的 Client ID。
 - `GITHUB_CLIENT_SECRET`: 您的 GitHub OAuth App 的 Client Secret。
-- `GITHUB_REDIRECT_URL`: 回调 URL。对于本地测试，这是 `http://localhost:3002/auth/github/callback`。
+- `GITHUB_REDIRECT_URL`: 回调 URL。对于本地测试，这是 `http://localhost:3002/auth/callback`。
 - `JWT_SECRET`: 用于签署会话令牌的强随机字符串。使用 `openssl rand -base64 32` 生成一个。
 - `OPENAI_API_KEY`: 您在 OpenAI 的秘密密钥。
 - `OPENAI_BASE_URL`: (可选) 用于使用兼容的 API，如 Azure OpenAI。
@@ -97,7 +123,7 @@ docker compose up -d
 # 从 https://github.com/settings/developers 获取
 GITHUB_CLIENT_ID=your_github_client_id
 GITHUB_CLIENT_SECRET=your_github_client_secret
-GITHUB_REDIRECT_URL=http://localhost:3002/auth/github/callback
+GITHUB_REDIRECT_URL=http://localhost:3002/auth/callback
 
 # 使用以下命令生成: openssl rand -base64 32
 JWT_SECRET=your_super_secret_jwt_string
@@ -129,7 +155,7 @@ docker build -t excalidraw-complete -f excalidraw-complete.Dockerfile .
 docker run -p 3002:3002 \
   -e GITHUB_CLIENT_ID="your_id" \
   -e GITHUB_CLIENT_SECRET="your_secret" \
-  -e GITHUB_REDIRECT_URL="http://localhost:3002/auth/github/callback" \
+  -e GITHUB_REDIRECT_URL="http://localhost:3002/auth/callback" \
   -e JWT_SECRET="your_jwt_secret" \
   -e STORAGE_TYPE="sqlite" \
   -e DATA_SOURCE_NAME="excalidraw.db" \

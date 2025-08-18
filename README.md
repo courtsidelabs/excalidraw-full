@@ -53,6 +53,33 @@ docker compose up -d
 
 The server will start, and you can access the application at `http://localhost:3002`.
 
+
+<!-- Summary Folded -->
+<details>
+<summary>Use Simple Password Authentication(Dex OIDC)</summary>
+
+```bash
+# Example for Linux
+git clone https://github.com/BetterAndBetterII/excalidraw-full.git
+cd excalidraw-full
+mv .env.example .env
+touch ./excalidraw.db  # IMPORTANT: Initialize the SQLite DB, OTHERWISE IT WILL NOT START
+docker compose -f docker-compose.dex.yml up -d
+```
+
+Change your password in `.env` file.
+
+```bash
+# apt install apache2-utils
+# Generate the password hash
+echo YOUR_NEW_PASSWORD | htpasswd -BinC 10 admin | cut -d: -f2 > .htpasswd
+# Update your .env file
+sed -i "s|ADMIN_PASSWORD_HASH=.*|ADMIN_PASSWORD_HASH='$(cat .htpasswd)'|" .env
+```
+
+</details>
+
+
 ## Configuration
 
 Configuration is managed via environment variables. For a full template, see the `.env.example` section below.
@@ -63,7 +90,7 @@ You must configure GitHub OAuth and a JWT secret for the application to function
 
 - `GITHUB_CLIENT_ID`: Your GitHub OAuth App's Client ID.
 - `GITHUB_CLIENT_SECRET`: Your GitHub OAuth App's Client Secret.
-- `GITHUB_REDIRECT_URL`: The callback URL. For local testing, this is `http://localhost:3002/auth/github/callback`.
+- `GITHUB_REDIRECT_URL`: The callback URL. For local testing, this is `http://localhost:3002/auth/callback`.
 - `JWT_SECRET`: A strong, random string for signing session tokens. Generate one with `openssl rand -base64 32`.
 - `OPENAI_API_KEY`: Your secret key from OpenAI.
 - `OPENAI_BASE_URL`: (Optional) For using compatible APIs like Azure OpenAI.
@@ -97,7 +124,7 @@ Create a `.env` file in the project root and add the following, filling in your 
 # Get from https://github.com/settings/developers
 GITHUB_CLIENT_ID=your_github_client_id
 GITHUB_CLIENT_SECRET=your_github_client_secret
-GITHUB_REDIRECT_URL=http://localhost:3002/auth/github/callback
+GITHUB_REDIRECT_URL=http://localhost:3002/auth/callback
 
 # Generate with: openssl rand -base64 32
 JWT_SECRET=your_super_secret_jwt_string
@@ -129,7 +156,7 @@ docker build -t excalidraw-complete -f excalidraw-complete.Dockerfile .
 docker run -p 3002:3002 \
   -e GITHUB_CLIENT_ID="your_id" \
   -e GITHUB_CLIENT_SECRET="your_secret" \
-  -e GITHUB_REDIRECT_URL="http://localhost:3002/auth/github/callback" \
+  -e GITHUB_REDIRECT_URL="http://localhost:3002/auth/callback" \
   -e JWT_SECRET="your_jwt_secret" \
   -e STORAGE_TYPE="sqlite" \
   -e DATA_SOURCE_NAME="excalidraw.db" \
