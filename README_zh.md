@@ -61,7 +61,7 @@ docker compose up -d
 # 示例
 git clone https://github.com/BetterAndBetterII/excalidraw-full.git
 cd excalidraw-full
-mv .env.example .env
+mv .env.example.dex .env
 touch ./excalidraw.db  # 重要：初始化 SQLite 数据库，否则无法启动
 docker compose -f docker-compose.dex.yml up -d
 ```

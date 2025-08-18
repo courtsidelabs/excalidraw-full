@@ -62,7 +62,7 @@ The server will start, and you can access the application at `http://localhost:3
 # Example for Linux
 git clone https://github.com/BetterAndBetterII/excalidraw-full.git
 cd excalidraw-full
-mv .env.example .env
+mv .env.example.dex .env
 touch ./excalidraw.db  # IMPORTANT: Initialize the SQLite DB, OTHERWISE IT WILL NOT START
 docker compose -f docker-compose.dex.yml up -d
 ```
