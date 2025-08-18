@@ -171,6 +171,11 @@ func setupRouter(store stores.Store) *chi.Mux {
 		r.Get("/callback", auth.HandleGitHubCallback)
 	})
 
+	r.Route("/auth/oidc", func(r chi.Router) {
+		r.Get("/login", auth.HandleOIDCLogin)
+		r.Get("/callback", auth.HandleOIDCCallback)
+	})
+
 	return r
 }
 
@@ -307,6 +312,7 @@ func main() {
 	})
 
 	auth.Init()
+	auth.InitDex()
 	openai.Init()
 	store := stores.GetStore()
 
