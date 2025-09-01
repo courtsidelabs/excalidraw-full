@@ -25,10 +25,10 @@ jobs:
           token: ${{ secrets.SECRET_PAT }}
           path: excalidraw
 
-      - name: Set up Go
-        uses: actions/setup-go@v3
-        with:
-          go-version: 1.23.0
+      # - name: Set up Go
+      #   uses: actions/setup-go@v3
+      #   with:
+      #     go-version: 1.23.0
 
       - name: Deploy to Railway
         run: railway up --service=${{ env.SVC_ID }}
