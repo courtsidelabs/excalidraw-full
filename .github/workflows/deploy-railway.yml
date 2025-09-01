@@ -23,7 +23,7 @@ jobs:
         with:
           repository: emilshr/excalidraw
           ref: b5cca50
-          token: ${{ secrets.SECRET_PAT }}
+          token: ${{ secrets.SECRET_TOKEN }}
           path: excalidraw
 
       # - name: Set up Go
