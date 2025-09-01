@@ -9,6 +9,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     container: ghcr.io/railwayapp/cli:latest
+    environment: prod
     env:
       SVC_ID: ${{ secrets.SVC_ID }}
       RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
