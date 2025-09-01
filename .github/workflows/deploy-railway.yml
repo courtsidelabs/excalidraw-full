@@ -13,7 +13,7 @@ jobs:
     env:
       SVC_ID: ${{ secrets.SVC_ID }}
       RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-      RAILWAY_DOCKERFILE_PATH: excalidraw-complete.Dockerfile
+      # RAILWAY_DOCKERFILE_PATH: excalidraw-complete.Dockerfile
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
