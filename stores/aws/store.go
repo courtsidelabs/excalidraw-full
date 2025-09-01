@@ -10,14 +10,17 @@ import (
 	"io"
 	"io/ioutil"
 	"log"
+	"os"
 	"path"
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	s3types "github.com/aws/aws-sdk-go-v2/service/s3/types"
 	"github.com/oklog/ulid/v2"
+	"github.com/sirupsen/logrus"
 )
 
 type s3Store struct {
@@ -27,11 +30,29 @@ type s3Store struct {
 
 // NewStore creates a new S3-based store.
 func NewStore(bucketName string) *s3Store {
-	cfg, err := config.LoadDefaultConfig(context.TODO())
+
+	cloudflareEndpoint := os.Getenv("AWS_ENDPOINT")
+
+	logrus.Info("cloudFlareEndpoint", cloudflareEndpoint)
+
+	r2Resolver := aws.EndpointResolverWithOptionsFunc(func(service, region string, options ...interface{}) (aws.Endpoint, error) {
+		return aws.Endpoint{
+			URL:               cloudflareEndpoint,
+			HostnameImmutable: true,
+			Source:            aws.EndpointSourceCustom,
+		}, nil
+	})
+
+	cfg, err := config.LoadDefaultConfig(context.TODO(),
+		config.WithEndpointResolverWithOptions(r2Resolver),
+		config.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(os.Getenv("AWS_ACCESS_KEY_ID"), os.Getenv("AWS_SECRET_ACCESS_KEY"), "")),
+		config.WithRegion(os.Getenv("AWS_REGION")),
+	)
 	if err != nil {
 		log.Fatalf("unable to load SDK config, %v", err)
 	}
 
+	// Configure S3 client for custom endpoint (e.g., Cloudflare R2)
 	s3Client := s3.NewFromConfig(cfg)
 
 	return &s3Store{

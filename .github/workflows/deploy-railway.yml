@@ -1,0 +1,34 @@
+name: Deploy to Railway
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    container: ghcr.io/railwayapp/cli:latest
+    env:
+      SVC_ID: ${{ secrets.SVC_ID }}
+      RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+      RAILWAY_DOCKERFILE_PATH: excalidraw-complete.Dockerfile
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Checkout excalidraw frontend app
+        uses: actions/checkout@v3
+        with:
+          repository: emilshr/excalidraw
+          ref: b5cca50
+          token: ${{ secrets.SECRET_PAT }}
+          path: excalidraw
+
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: 1.23.0
+
+      - name: Deploy to Railway
+        run: railway up --service=${{ env.SVC_ID }}
