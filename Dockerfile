@@ -1,6 +1,11 @@
 # 前端构建阶段
 FROM --platform=$BUILDPLATFORM node:18 AS frontend-builder
 WORKDIR /app
+
+# Commit: b5cca50 contains the pnpm port that the Dockerfile uses
+RUN git clone https://github.com/courtsidelabs/excalidraw.git ./excalidraw && cd excalidraw && git checkout b5cca50
+
+WORKDIR /app
 # 复制 excalidraw 子模块
 COPY excalidraw/ ./excalidraw/
 # 构建前端

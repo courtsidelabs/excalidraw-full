@@ -20,7 +20,6 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	s3types "github.com/aws/aws-sdk-go-v2/service/s3/types"
 	"github.com/oklog/ulid/v2"
-	"github.com/sirupsen/logrus"
 )
 
 type s3Store struct {
@@ -32,8 +31,6 @@ type s3Store struct {
 func NewStore(bucketName string) *s3Store {
 
 	cloudflareEndpoint := os.Getenv("AWS_ENDPOINT")
-
-	logrus.Info("cloudFlareEndpoint", cloudflareEndpoint)
 
 	r2Resolver := aws.EndpointResolverWithOptionsFunc(func(service, region string, options ...interface{}) (aws.Endpoint, error) {
 		return aws.Endpoint{
